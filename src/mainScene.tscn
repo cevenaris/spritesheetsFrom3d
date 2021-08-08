@@ -1,3 +1,49 @@
-[gd_scene format=2]
+[gd_scene load_steps=3 format=2]
 
-[node name="mainScene" type="Node2D"]
+[ext_resource path="res://mainScene.gd" type="Script" id=1]
+[ext_resource path="res://editor/myEditor.tscn" type="PackedScene" id=2]
+
+[node name="mainScene" type="Control"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 1920.0
+margin_bottom = 1080.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="HBoxContainer"]
+margin_right = 1319.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.69
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="HBoxContainer/ViewportContainer"]
+size = Vector2( 1319, 1080 )
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="myEditor" parent="HBoxContainer/ViewportContainer/Viewport" instance=ExtResource( 2 )]
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+margin_left = 1323.0
+margin_right = 1361.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.02
+
+[node name="ui" type="HBoxContainer" parent="HBoxContainer"]
+margin_left = 1365.0
+margin_right = 1920.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.29
