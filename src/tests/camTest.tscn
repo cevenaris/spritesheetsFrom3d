@@ -12,5 +12,11 @@
 mesh = SubResource( 1 )
 material/0 = null
 
-[node name="Camera" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+[node name="subject2" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3 )
+
+[node name="MeshInstance" type="MeshInstance" parent="subject2"]
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="Pivot" parent="." instance=ExtResource( 1 )]

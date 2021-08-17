@@ -1,7 +1,8 @@
 extends Spatial
+class_name MyEditor
 
 
-const MOVE_SENS = 0.01
+const MOVE_SENS = 0.005
 const SCROLL_SENS = 0.2
 #const RESET_POS : Transform = 
 
@@ -31,7 +32,7 @@ func _input(event):
 	elif Input.is_action_pressed("editor_rotate"):
 		if event is InputEventMouseMotion:
 			pivot.rotate_y(event.relative.x * MOVE_SENS)
-			pivot.rotate_x(-event.relative.y * MOVE_SENS)
+			pivot.rotate_x(event.relative.y * MOVE_SENS)
 	
 	elif Input.is_action_pressed("editor_zoomIn") or Input.is_action_pressed("editor_zoomOut"):
 		if event is InputEventMouseButton:

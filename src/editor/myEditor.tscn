@@ -2,7 +2,7 @@
 
 [ext_resource path="res://editor/myEditor.gd" type="Script" id=1]
 
-[sub_resource type="CylinderMesh" id=3]
+[sub_resource type="CylinderMesh" id=1]
 
 [sub_resource type="Environment" id=2]
 ambient_light_color = Color( 1, 1, 1, 1 )
@@ -16,7 +16,7 @@ __meta__ = {
 }
 
 [node name="MeshInstance" type="MeshInstance" parent="placeHolder"]
-mesh = SubResource( 3 )
+mesh = SubResource( 1 )
 material/0 = null
 
 [node name="Pivot" type="Spatial" parent="placeHolder"]
