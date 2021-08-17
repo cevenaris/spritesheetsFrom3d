@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://mainScene.gd" type="Script" id=1]
 [ext_resource path="res://editor/myEditor.tscn" type="PackedScene" id=2]
+[ext_resource path="res://ui/animationControls.tscn" type="PackedScene" id=3]
 
 [node name="mainScene" type="Control"]
 script = ExtResource( 1 )
@@ -40,10 +41,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.02
 
-[node name="ui" type="HBoxContainer" parent="HBoxContainer"]
+[node name="ui" type="VBoxContainer" parent="HBoxContainer"]
 margin_left = 1365.0
 margin_right = 1920.0
 margin_bottom = 1080.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.29
+
+[node name="Control" parent="HBoxContainer/ui" instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 555.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.1
