@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://tests/ViewportTextureUpdateTest.gd" type="Script" id=1]
+[ext_resource path="res://editor/myEditor.tscn" type="PackedScene" id=2]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 1920.0
+margin_bottom = 1080.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ViewportContainer" type="ViewportContainer" parent="HBoxContainer"]
+margin_right = 958.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="HBoxContainer/ViewportContainer"]
+size = Vector2( 958, 1080 )
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="ViewportContainer2" type="ViewportContainer" parent="HBoxContainer"]
+margin_left = 962.0
+margin_right = 1920.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="HBoxContainer/ViewportContainer2"]
+size = Vector2( 958, 1080 )
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="myEditor" parent="HBoxContainer/ViewportContainer2/Viewport" instance=ExtResource( 2 )]

@@ -1,11 +1,9 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://editor/myEditor.gd" type="Script" id=1]
+[ext_resource path="res://editor/cam.tscn" type="PackedScene" id=2]
 
-[sub_resource type="CylinderMesh" id=1]
-
-[sub_resource type="Environment" id=2]
-ambient_light_color = Color( 1, 1, 1, 1 )
+[sub_resource type="CubeMesh" id=1]
 
 [node name="myEditor" type="Spatial"]
 script = ExtResource( 1 )
@@ -19,9 +17,4 @@ __meta__ = {
 mesh = SubResource( 1 )
 material/0 = null
 
-[node name="Pivot" type="Spatial" parent="placeHolder"]
-
-[node name="Camera" type="Camera" parent="placeHolder"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4 )
-environment = SubResource( 2 )
-current = true
+[node name="PivotY" parent="." instance=ExtResource( 2 )]
