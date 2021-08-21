@@ -45,3 +45,11 @@ func _input(event):
 func get_camera() -> Camera:
 	var rv : Camera = $PivotX/Camera
 	return rv
+
+
+func get_pivot_y() -> Spatial:
+	return self
+
+
+func get_pivot_x() -> Spatial:
+	return $PivotX as Spatial

@@ -6,7 +6,8 @@ var textures : Array = []
 
 var hbc : HBoxContainer
 var vpc: ViewportContainer
-var vp: Viewport
+var vpt: Viewport
+var edt : MyEditor
 
 var texture_width = 800
 var texture_height = 400
@@ -20,10 +21,10 @@ func _ready():
 	screenSize.y = ProjectSettings.get_setting("display/window/size/height")
 	$HBoxContainer.rect_size = screenSize
 	
-	vp = $HBoxContainer/ViewportContainer/Viewport
-	pass # Replace with function body.
-	
-#	test(vp.get_texture())
+	hbc = $HBoxContainer
+	vpc = $HBoxContainer/ViewportContainer
+	vpt = $HBoxContainer/ViewportContainer/Viewport
+	edt = $HBoxContainer/ViewportContainer/Viewport/myEditor
 
 
 func _process(delta):
@@ -33,24 +34,36 @@ func _process(delta):
 func _input(event):
 	if event is InputEventKey:
 		if Input.is_action_just_pressed("viewport_get_image"):
-#			var image : Texture = vp.get_texture()
-#			textures.append(image)
-#			print(textures)
-			var image : ViewportTexture = vp.get_texture()
-			textures.append(image)
-			print(textures)
-#			swap_viewports()
+			store_current_texture()
+			replace_viewport()
 		
 		elif Input.is_action_just_pressed("test_save_sheet"):
-			print("s pressed")
 			save_spriteSheet(create_spriteSheet())
 
 
-# 
-#func test(text : Texture):
-#	var img : Image = text.get_data()
-#	var pba : PoolByteArray = img.get_data()
-#	print(pba.size())
+func store_current_texture() -> void:
+	var image : ViewportTexture = vpt.get_texture()
+	textures.append(image)
+
+
+func replace_viewport() -> void:
+	var transY = edt.get_pivot_y().transform
+	var transX = edt.get_pivot_x().transform
+	var transZ = edt.get_camera().transform
+	
+	var dupe = vpc.duplicate()
+	hbc.remove_child(hbc.get_child(0))
+	hbc.add_child(dupe)
+	hbc.move_child(dupe, 0)
+	
+	vpc = hbc.get_child(0)
+	vpt = vpc.get_child(0)
+	edt = vpt.get_child(0)
+	
+	edt.get_pivot_y().transform = transY
+	edt.get_pivot_x().transform = transX
+	edt.get_camera().transform = transZ
+	
 
 
 func create_spriteSheet() -> Image:
@@ -59,14 +72,12 @@ func create_spriteSheet() -> Image:
 	
 	var pba : PoolByteArray = PoolByteArray()
 	for i in textures:
-		print(i.get_data())
-#		var toFlip = i.get_data()
-#		toFlip.flip_y()
-#		var flipped = toFlip.get_data()
-		pba.append_array(i.get_data().get_data())
+		var img : Image= i.get_data()
+		img.convert(Image.FORMAT_RGBA8)
+		pba.append_array(img.get_data())
 	
 	var rv : Image = Image.new()
-	rv.create_from_data(x, y, false, Image.FORMAT_RGBAH, pba)
+	rv.create_from_data(x, y, false, Image.FORMAT_RGBA8, pba)
 	
 	return rv
 
