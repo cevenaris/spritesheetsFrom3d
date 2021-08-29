@@ -9,27 +9,67 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Control",
+"class": "AnimationController",
+"language": "GDScript",
+"path": "res://ui/AnimationController.gd"
+}, {
 "base": "Spatial",
 "class": "EditorCamera",
 "language": "GDScript",
 "path": "res://editor/cam.gd"
 }, {
+"base": "Resource",
+"class": "HelperFunctions",
+"language": "GDScript",
+"path": "res://misc/helperFunctions.gd"
+}, {
 "base": "Spatial",
 "class": "MyEditor",
 "language": "GDScript",
 "path": "res://editor/myEditor.gd"
+}, {
+"base": "Spatial",
+"class": "RotationGizmo",
+"language": "GDScript",
+"path": "res://editor/rotationGizmo.gd"
+}, {
+"base": "Control",
+"class": "SpriteSheetsFrom3D",
+"language": "GDScript",
+"path": "res://SpritesheetsFrom3D.gd"
+}, {
+"base": "CanvasLayer",
+"class": "UIManager",
+"language": "GDScript",
+"path": "res://ui/UI.gd"
+}, {
+"base": "Control",
+"class": "ViewportSizeControls",
+"language": "GDScript",
+"path": "res://ui/ViewportSizeControls.gd"
 } ]
 _global_script_class_icons={
+"AnimationController": "",
 "EditorCamera": "",
-"MyEditor": ""
+"HelperFunctions": "",
+"MyEditor": "",
+"RotationGizmo": "",
+"SpriteSheetsFrom3D": "",
+"UIManager": "",
+"ViewportSizeControls": ""
 }
 
 [application]
 
 config/name="spritesheetsFrom3d"
-run/main_scene="res://mainScene.tscn"
+run/main_scene="res://SpritesheetsFrom3D.tscn"
 run/low_processor_mode=true
 config/icon="res://icon.png"
+
+[autoload]
+
+helperFunctions="*res://misc/helperFunctions.gd"
 
 [display]
 

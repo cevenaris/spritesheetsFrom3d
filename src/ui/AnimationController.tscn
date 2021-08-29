@@ -1,0 +1,97 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://ui/AnimationController.gd" type="Script" id=1]
+
+[node name="AnimationController" type="VBoxContainer"]
+margin_left = 320.0
+margin_top = 1000.0
+margin_right = 1600.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 2
+alignment = 1
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 1280.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPicker" type="OptionButton" parent="HBoxContainer"]
+margin_right = 629.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+text = "No animations found."
+
+[node name="Start" type="Button" parent="HBoxContainer"]
+margin_left = 633.0
+margin_right = 758.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+text = "<<"
+
+[node name="Rewind" type="Button" parent="HBoxContainer"]
+margin_left = 762.0
+margin_right = 887.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+toggle_mode = true
+text = "<"
+
+[node name="Pause" type="Button" parent="HBoxContainer"]
+margin_left = 891.0
+margin_right = 1016.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+text = "||"
+
+[node name="Play" type="Button" parent="HBoxContainer"]
+margin_left = 1020.0
+margin_right = 1145.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+toggle_mode = true
+text = ">"
+
+[node name="End" type="Button" parent="HBoxContainer"]
+margin_left = 1149.0
+margin_right = 1280.0
+margin_bottom = 62.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+text = ">>"
+
+[node name="animationSlider" type="HSlider" parent="."]
+margin_top = 64.0
+margin_right = 1280.0
+margin_bottom = 80.0
+step = 0.1
+tick_count = 10
+ticks_on_borders = true
+[connection signal="item_selected" from="HBoxContainer/AnimationPicker" to="." method="_on_AnimationPicker_item_selected"]
+[connection signal="pressed" from="HBoxContainer/Start" to="." method="_on_Start_pressed"]
+[connection signal="toggled" from="HBoxContainer/Rewind" to="." method="_on_Rewind_toggled"]
+[connection signal="pressed" from="HBoxContainer/Pause" to="." method="_on_Pause_pressed"]
+[connection signal="toggled" from="HBoxContainer/Play" to="." method="_on_Play_toggled"]
+[connection signal="pressed" from="HBoxContainer/End" to="." method="_on_End_pressed"]
+[connection signal="value_changed" from="animationSlider" to="." method="_on_animationSlider_value_changed"]

@@ -84,3 +84,19 @@ func create_spriteSheet() -> Image:
 
 func save_spriteSheet(imgSheet : Image):
 	imgSheet.save_png(saveLoc)
+
+
+func _on_ViewportSizeControls_sizeValuesChanged(w, h):
+	var totWidth = $HBoxContainer/ViewportHeight/ViewportWidth.rect_size.x
+	var totHeight = $HBoxContainer/ViewportHeight.rect_size.y
+	
+	var extraWidth = totWidth - w
+	var extraHeight = totHeight - h
+	
+	var proportionExtraWidth = extraWidth / totWidth
+	var proportionExtraHeight = extraHeight / totHeight
+	
+	$HBoxContainer/ViewportHeight/ViewportWidth/leftPanel.size_flags_stretch_ratio = proportionExtraWidth / 2
+	$HBoxContainer/ViewportHeight/ViewportWidth/rightPanel.size_flags_stretch_ratio = proportionExtraWidth / 2
+	$HBoxContainer/ViewportHeight/topPanel.size_flags_stretch_ratio = proportionExtraHeight / 2
+	$HBoxContainer/ViewportHeight/botPanel.size_flags_stretch_ratio = proportionExtraHeight / 2

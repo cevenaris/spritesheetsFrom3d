@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://mainScene.gd" type="Script" id=1]
 [ext_resource path="res://editor/myEditor.tscn" type="PackedScene" id=2]
 [ext_resource path="res://ui/animationControls.tscn" type="PackedScene" id=3]
+[ext_resource path="res://ui/ViewportSizeControls.tscn" type="PackedScene" id=4]
 
 [node name="mainScene" type="Control"]
 script = ExtResource( 1 )
@@ -17,22 +18,53 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ViewportContainer" type="ViewportContainer" parent="HBoxContainer"]
+[node name="ViewportHeight" type="VBoxContainer" parent="HBoxContainer"]
 margin_right = 1319.0
 margin_bottom = 1080.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.69
+
+[node name="topPanel" type="Panel" parent="HBoxContainer/ViewportHeight"]
+margin_right = 1319.0
+
+[node name="ViewportWidth" type="HBoxContainer" parent="HBoxContainer/ViewportHeight"]
+margin_top = 4.0
+margin_right = 1319.0
+margin_bottom = 1076.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="leftPanel" type="Panel" parent="HBoxContainer/ViewportHeight/ViewportWidth"]
+margin_bottom = 1072.0
+
+[node name="ViewportContainer" type="ViewportContainer" parent="HBoxContainer/ViewportHeight/ViewportWidth"]
+margin_left = 4.0
+margin_right = 1315.0
+margin_bottom = 1072.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.69
 stretch = true
 
-[node name="Viewport" type="Viewport" parent="HBoxContainer/ViewportContainer"]
-size = Vector2( 1319, 1080 )
+[node name="Viewport" type="Viewport" parent="HBoxContainer/ViewportHeight/ViewportWidth/ViewportContainer"]
+size = Vector2( 1311, 1072 )
 own_world = true
 transparent_bg = true
 handle_input_locally = false
 render_target_update_mode = 3
 
-[node name="myEditor" parent="HBoxContainer/ViewportContainer/Viewport" instance=ExtResource( 2 )]
+[node name="myEditor" parent="HBoxContainer/ViewportHeight/ViewportWidth/ViewportContainer/Viewport" instance=ExtResource( 2 )]
+
+[node name="rightPanel" type="Panel" parent="HBoxContainer/ViewportHeight/ViewportWidth"]
+margin_left = 1319.0
+margin_right = 1319.0
+margin_bottom = 1072.0
+
+[node name="botPanel" type="Panel" parent="HBoxContainer/ViewportHeight"]
+margin_top = 1080.0
+margin_right = 1319.0
+margin_bottom = 1080.0
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
 margin_left = 1323.0
@@ -42,7 +74,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.02
 
-[node name="ui" type="VBoxContainer" parent="HBoxContainer"]
+[node name="Tools" type="VBoxContainer" parent="HBoxContainer"]
 margin_left = 1365.0
 margin_right = 1920.0
 margin_bottom = 1080.0
@@ -50,10 +82,20 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.29
 
-[node name="Control" parent="HBoxContainer/ui" instance=ExtResource( 3 )]
+[node name="Control" parent="HBoxContainer/Tools" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 555.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.1
+
+[node name="ViewportSizeControls" parent="HBoxContainer/Tools" instance=ExtResource( 4 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 24.0
+margin_right = 555.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+[connection signal="sizeValuesChanged" from="HBoxContainer/Tools/ViewportSizeControls" to="." method="_on_ViewportSizeControls_sizeValuesChanged"]
