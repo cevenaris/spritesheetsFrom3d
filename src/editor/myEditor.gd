@@ -8,8 +8,8 @@ var rot_sens = 0.08
 var zoom_sens = 0.2
 
 const OBJ_CHILD_LOC = 0
-var obj : PackedScene setget set_obj
-var animationPlayer : AnimationPlayer
+var obj : Node setget set_obj
+#var animationPlayer : AnimationPlayer
 var cam : EditorCamera
 #var rotGizmo : RotationGizmo
 
@@ -18,7 +18,7 @@ var cam : EditorCamera
 
 func _ready():
 	cam = $PivotY
-	animationPlayer = null
+#	animationPlayer = null
 #	rotGizmo = $Control/HBoxContainer/ViewportContainer/Viewport/Spatial/PivotY
 	
 #	var parent = get_node(parentPath)
@@ -57,15 +57,13 @@ func _input(event):
 #		rotGizmo.reset_gizmo()
 
 
-func set_obj(new_obj : PackedScene):
+func set_obj(new_obj : Node):
 	if new_obj == null:
 		print("ERROR: scene file could not be loaded, using default cube instead")
 		createPlaceHolder()
 	else:
-		var objScene = new_obj.instance()
-		add_child(objScene)
-		move_child(objScene, OBJ_CHILD_LOC)
-		set_animation_player(objScene)
+		add_child(new_obj)
+		move_child(new_obj, OBJ_CHILD_LOC)
 
 
 func createPlaceHolder():
@@ -77,17 +75,17 @@ func createPlaceHolder():
 	move_child(placeHolder, OBJ_CHILD_LOC)
 
 
-func set_animation_player(objScene : Node) -> void:
-	var childList = objScene.get_children()
-	for child in childList:
-		if child is AnimationPlayer:
-			animationPlayer = child
-			return
-	animationPlayer = null
-
-
-func get_animation_player() -> AnimationPlayer:
-	return animationPlayer
+#func set_animation_player(objScene : Node) -> void:
+#	var childList = objScene.get_children()
+#	for child in childList:
+#		if child is AnimationPlayer:
+#			animationPlayer = child
+#			return
+#	animationPlayer = null
+#
+#
+#func get_animation_player() -> AnimationPlayer:
+#	return animationPlayer
 
 
 func get_camera() -> Camera:

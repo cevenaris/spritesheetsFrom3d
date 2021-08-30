@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://demos/human_low_animated.glb" type="PackedScene" id=1]
+[ext_resource path="res://tests/animationPlayerFromCodeTest.gd" type="Script" id=2]
+
+
+[node name="human_low_animated" instance=ExtResource( 1 )]
+script = ExtResource( 2 )
+
+[node name="Camera" type="Camera" parent="." index="2"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )

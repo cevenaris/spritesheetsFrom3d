@@ -1,0 +1,75 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://tests/animationPlayerFromCodeTest2.gd" type="Script" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Button
+
+
+var ap : AnimationPlayer setget set_ap
+
+
+func _ready():
+	connect(\"pressed\", self, \"button_pressed\")
+
+
+func set_ap(new_ap):
+	ap = new_ap
+
+
+func button_pressed():
+	if ap != null:
+#		ap.play(ap.get_animation_list()[0])
+		ap.stop(false)
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+modelLoc = "res://tests/human_low_animated.glb"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ViewportContainer" type="ViewportContainer" parent="HBoxContainer"]
+margin_right = 1920.0
+margin_bottom = 1080.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+
+[node name="Viewport" type="Viewport" parent="HBoxContainer/ViewportContainer"]
+size = Vector2( 1920, 1080 )
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="Spatial" type="Spatial" parent="HBoxContainer/ViewportContainer/Viewport"]
+
+[node name="Camera" type="Camera" parent="HBoxContainer/ViewportContainer/Viewport/Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3 )
+
+[node name="Button" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -110.516
+margin_top = -115.427
+margin_right = 81.4845
+margin_bottom = -7.42712
+
+[node name="Button2" type="Button" parent="."]
+anchor_top = 0.5
+anchor_bottom = 0.5
+margin_top = -10.0
+margin_right = 192.0
+margin_bottom = 98.0
+script = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

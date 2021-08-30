@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://SpritesheetsFrom3D.gd" type="Script" id=1]
 [ext_resource path="res://editor/myEditor.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://editor/clear_env.tres" type="Environment" id=4]
 [ext_resource path="res://ui/AnimationController.tscn" type="PackedScene" id=5]
 [ext_resource path="res://ui/UI.gd" type="Script" id=6]
+[ext_resource path="res://demos/sobelFilter.tres" type="Material" id=7]
 
 [sub_resource type="World" id=1]
 environment = ExtResource( 4 )
@@ -18,7 +19,11 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-model_location = "res://tests/human_low_animated.glb"
+environment = ExtResource( 3 )
+postprocessing = ExtResource( 7 )
+model_location = "res://demos/human_low_animated.glb"
+sheet_save_location = "res://tests"
+sheet_save_name = "VTUT.png"
 pan_sensitivity = 0.02
 rotate_sensitivity = 0.02
 
@@ -111,7 +116,7 @@ margin_bottom = 46.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
 size_flags_stretch_ratio = 0.3
-text = "Status goes here"
+text = "Status: "
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -122,4 +127,5 @@ margin_top = 0.0
 margin_right = 1920.0
 margin_bottom = 79.0
 size_flags_stretch_ratio = 0.7
-[connection signal="ready" from="ViewportHeight/ViewportWidth/ViewportContainer/Viewport/myEditor" to="." method="_on_myEditor_ready"]
+[connection signal="picture_taken" from="." to="UI" method="_on_SpritesheetsFrom3D_picture_taken"]
+[connection signal="sheet_saved" from="." to="UI" method="_on_SpritesheetsFrom3D_sheet_saved"]

@@ -2,12 +2,12 @@
 
 importer="scene"
 type="PackedScene"
-path="res://.import/human_low_animated.glb-3bba379add846e025e8e63948dcc2ac6.scn"
+path="res://.import/human_low_animated.glb-1244738b5dab6e973edf62da40a93529.scn"
 
 [deps]
 
-source_file="res://tests/human_low_animated.glb"
-dest_files=[ "res://.import/human_low_animated.glb-3bba379add846e025e8e63948dcc2ac6.scn" ]
+source_file="res://demos/human_low_animated.glb"
+dest_files=[ "res://.import/human_low_animated.glb-1244738b5dab6e973edf62da40a93529.scn" ]
 
 [params]
 

@@ -4,10 +4,11 @@ extends Control
 
 export (Vector2) var viewport_size = Vector2(1920, 1080) # setget viewport_size_set
 export (bool) var transparent_bg = true # setget transparent_bg_set
-export (World) var viewport_world
+export (Environment) var environment
 export (ShaderMaterial) var postprocessing
 export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx") var model_location # setget set_model_location
 export (String, DIR) var sheet_save_location
+export (String) var sheet_save_name
 export (float, 0.0, 1.0) var pan_sensitivity = 0.04 # setget set_pan_sens
 export (float, 0.0, 1.0) var rotate_sensitivity = 0.04 # setget set_rot_sens
 export (float, 0.0, 1.0) var zoom_sensitivity = 0.2 # setget set_zoom_sens
@@ -27,8 +28,13 @@ var vpc: ViewportContainer
 var vpt: Viewport
 var edt : MyEditor
 var amc : AnimationController
+var mds # the model scene
+var amp : AnimationPlayer
 #var is_edt_ready = false
 const VPC_CHILD_NUM = 1
+
+signal picture_taken
+signal sheet_saved
 
 
 func _ready():
@@ -49,25 +55,28 @@ func _ready():
 	adjust_vpc_size(viewport_size)
 	
 	var modelScene : PackedScene = load(model_location)
-	edt.obj = modelScene
+	if modelScene != null:
+		mds = modelScene.instance()
+		edt.obj = mds
+		amp = get_animation_player(mds)
+		$UI/HBoxContainer/AnimationController.animationPlayer = amp
+	else:
+		edt.obj = null
+		amc.animationPlayer = null
 	
-	vpt.transparent_bg = transparent_bg
-	vpt.world = viewport_world
-	
-#	vpc.material = postprocessing
-	
-	amc.animationPlayer = edt.get_animation_player()
-	
-	
+	edt.get_camera().environment = environment
+	vpc.material = postprocessing
 
 func _input(event):
 	if event is InputEventKey:
 		if Input.is_action_just_pressed("viewport_get_image"):
 			store_current_texture()
 			replace_viewport()
+			emit_signal("picture_taken")
 		
 		elif Input.is_action_just_pressed("test_save_sheet"):
-			save_spriteSheet(create_spriteSheet(), sheet_save_location)
+			save_spriteSheet(create_spriteSheet(), sheet_save_location, sheet_save_name)
+			emit_signal("sheet_saved")
 
 
 #func set_model_location(new_loc : String):
@@ -98,6 +107,13 @@ func _input(event):
 #
 #func bg_color_set(new_color):
 #	pass
+
+
+func get_animation_player(root : Node) -> AnimationPlayer:
+	for child in root.get_children():
+		if child is AnimationPlayer:
+			return child
+	return null
 
 
 func clamp_new_size(new_size : Vector2) -> Vector2:
@@ -169,8 +185,8 @@ func create_spriteSheet() -> Image:
 	return rv
 
 
-func save_spriteSheet(imgSheet : Image, saveLoc : String):
-	imgSheet.save_png(saveLoc)
+func save_spriteSheet(imgSheet : Image, saveLoc : String, saveName : String):
+	imgSheet.save_png(saveLoc + "/" + saveName)
 
 
 func wait(seconds : float) -> void:
