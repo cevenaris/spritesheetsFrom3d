@@ -66,12 +66,14 @@ func change_animation(id : int) -> void:
 func _on_Start_pressed():
 	if options.items.size() > 0:
 		animationPlayer.seek(0, true)
+		slider.value = 0
 		_on_Pause_pressed()
 
 
 func _on_End_pressed():
 	if options.items.size() > 0:
 		animationPlayer.seek(animationPlayer.current_animation_length, true)
+		slider.value = animationPlayer.current_animation_length
 		_on_Pause_pressed()
 
 

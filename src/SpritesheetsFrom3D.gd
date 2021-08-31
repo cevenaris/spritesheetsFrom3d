@@ -2,16 +2,23 @@ class_name SpriteSheetsFrom3D # add picture
 extends Control
 
 
+export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx, *.tscn") var model_location # setget set_model_location
+export (String, DIR) var sheet_save_location
+export (int, 1, 10) var number_of_sheets
+export var sheet_names = PoolStringArray()
 export (Vector2) var viewport_size = Vector2(1920, 1080) # setget viewport_size_set
 export (bool) var transparent_bg = true # setget transparent_bg_set
 export (Environment) var environment
-export (ShaderMaterial) var postprocessing
-export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx") var model_location # setget set_model_location
-export (String, DIR) var sheet_save_location
+export (ShaderMaterial) var canvas_shader
+export (ShaderMaterial) var spatial_shader
 export (String) var sheet_save_name
 export (float, 0.0, 1.0) var pan_sensitivity = 0.04 # setget set_pan_sens
 export (float, 0.0, 1.0) var rotate_sensitivity = 0.04 # setget set_rot_sens
 export (float, 0.0, 1.0) var zoom_sensitivity = 0.2 # setget set_zoom_sens
+
+var currSheet : int = 0
+const DEFAULT_SHEET_NAME = "unnamedSheet"
+const SHEET_EXTENSION = ".png"
 
 var screenSize : Vector2 # = HelperFunctions.get_display_window_size()
 const MIN_VIEWPORT_SIZE = Vector2(192, 108)
@@ -65,7 +72,27 @@ func _ready():
 		amc.animationPlayer = null
 	
 	edt.get_camera().environment = environment
-	vpc.material = postprocessing
+	vpc.material = canvas_shader
+	var allMeshes : Array = HelperFunctions.get_all_descendants_of_type(mds, MeshInstance)
+	for i in allMeshes:
+		var mesh : MeshInstance = i as MeshInstance
+		mesh.set_surface_material(1, spatial_shader)
+	
+	for i in range(number_of_sheets):
+		textures.append([])
+	
+	while sheet_names.size() > number_of_sheets:
+		sheet_names.remove(sheet_names.size() - 1)
+	
+	var count = 1
+	for i in range(sheet_names.size() - 1):
+		if sheet_names[i] == null or sheet_names[i] == "":
+			sheet_names[i] = DEFAULT_SHEET_NAME + str(count)
+			count += 1
+	while sheet_names.size() < number_of_sheets:
+		sheet_names.append(DEFAULT_SHEET_NAME + str(count))
+		count += 1
+
 
 func _input(event):
 	if event is InputEventKey:
@@ -74,8 +101,8 @@ func _input(event):
 			replace_viewport()
 			emit_signal("picture_taken")
 		
-		elif Input.is_action_just_pressed("test_save_sheet"):
-			save_spriteSheet(create_spriteSheet(), sheet_save_location, sheet_save_name)
+		elif Input.is_action_just_pressed("textures_save_sheet"):
+			save_all_sheets()
 			emit_signal("sheet_saved")
 
 
@@ -146,35 +173,69 @@ func adjust_vpc_size(new_size_unclamped: Vector2):
 
 func store_current_texture() -> void:
 	var image : ViewportTexture = vpt.get_texture()
-	textures.append(image)
+	textures[currSheet].append(image)
+	increment_sheet_num()
+
+
+
+func increment_sheet_num():
+	currSheet += 1
+	currSheet %= number_of_sheets
 
 
 func replace_viewport() -> void:
-	var transY = edt.get_pivot_y().transform
-	var transX = edt.get_pivot_x().transform
-	var transZ = edt.get_camera().transform
+#	var transY = edt.get_pivot_y().transform
+#	var transX = edt.get_pivot_x().transform
+#	var transZ = edt.get_camera().transform
+#
+#	var dupe = vpc.duplicate()
+#	hbc.remove_child(hbc.get_child(VPC_CHILD_NUM))
+#	hbc.add_child(dupe)
+#	hbc.move_child(dupe, VPC_CHILD_NUM)
+#
+#	vpc = hbc.get_child(VPC_CHILD_NUM)
+#	vpt = vpc.get_child(0)
+#	edt = vpt.get_child(0)
+#
+#	edt.get_pivot_y().transform = transY
+#	edt.get_pivot_x().transform = transX
+#	edt.get_camera().transform = transZ
 	
-	var dupe = vpc.duplicate()
-	hbc.remove_child(hbc.get_child(VPC_CHILD_NUM))
-	hbc.add_child(dupe)
-	hbc.move_child(dupe, VPC_CHILD_NUM)
+	# for some reason this way doesn't work, edt isn't added to the duplicate viewport
+#	var dupe : Viewport = vpt.duplicate() # duplicating the viewport
+#	print(dupe.get_children())
+#	dupe.remove_child(dupe.get_child(0)) # viewport only has one child, the editor
+#	print(dupe.get_children())
+#	dupe.add_child(edt)
+#	print(dupe.get_children())
+#	print(dupe.get_child(0) == edt)
+#	print(edt)
+#	print("---------------------")
+#	dupe.add_child(Node2D.new())
+#	dupe.add_child(edt)
+#	print(dupe.get_children())
 	
-	vpc = hbc.get_child(VPC_CHILD_NUM)
-	vpt = vpc.get_child(0)
-	edt = vpt.get_child(0)
+	# for some reason this also doesn't work, the editor just stops being updated
+	vpt.remove_child(edt) # removing edt from vpt
+	var dupe : Viewport = vpt.duplicate()
+	dupe.add_child(edt)
+
+	vpc.remove_child(vpt) # viewport container only has one child, the viewport
+	vpt = dupe as Viewport
+	vpc.add_child(vpt)
 	
-	edt.get_pivot_y().transform = transY
-	edt.get_pivot_x().transform = transX
-	edt.get_camera().transform = transZ
-	
+	print(vpt.get_camera() == edt.get_camera())
+	edt.get_camera().current = false
+	wait(0.5)
+	edt.get_camera().make_current()
 
 
-func create_spriteSheet() -> Image:
-	var x = textures[0].get_width()
-	var y = textures[0].get_height() * textures.size() 
+func create_spriteSheet(which : int) -> Image:
+	var x = textures[which][0].get_width()
+	var y = textures[which][0].get_height() * textures.size() 
 	
 	var pba : PoolByteArray = PoolByteArray()
-	for i in textures:
+	for i in textures[which]:
 		var img : Image= i.get_data()
 		img.convert(Image.FORMAT_RGBA8)
 		pba.append_array(img.get_data())
@@ -186,7 +247,12 @@ func create_spriteSheet() -> Image:
 
 
 func save_spriteSheet(imgSheet : Image, saveLoc : String, saveName : String):
-	imgSheet.save_png(saveLoc + "/" + saveName)
+	imgSheet.save_png(saveLoc + "/" + saveName + SHEET_EXTENSION)
+
+
+func save_all_sheets():
+	for i in range(number_of_sheets):
+		save_spriteSheet(create_spriteSheet(i), sheet_save_location, sheet_names[i])
 
 
 func wait(seconds : float) -> void:
