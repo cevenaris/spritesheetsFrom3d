@@ -18,7 +18,6 @@ sheet_save_location = "res://tests"
 number_of_sheets = 2
 sheet_names = PoolStringArray( "test1" )
 environment = ExtResource( 3 )
-sheet_save_name = "VTUT.png"
 pan_sensitivity = 0.02
 rotate_sensitivity = 0.02
 
@@ -105,45 +104,47 @@ __meta__ = {
 
 [node name="plusX" type="Button" parent="UI/CamControls"]
 margin_top = 458.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 478.0
 text = "+X"
 
 [node name="plusY" type="Button" parent="UI/CamControls"]
 margin_top = 482.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 502.0
 text = "+Y"
 
 [node name="plusZ" type="Button" parent="UI/CamControls"]
 margin_top = 506.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 526.0
 text = "+Z"
 
 [node name="minusX" type="Button" parent="UI/CamControls"]
 margin_top = 530.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 550.0
 text = "-X"
 
 [node name="minusY" type="Button" parent="UI/CamControls"]
 margin_top = 554.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 574.0
 text = "-Y"
 
 [node name="minusZ" type="Button" parent="UI/CamControls"]
 margin_top = 578.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 598.0
 text = "-Z"
 
 [node name="OptionButton" type="OptionButton" parent="UI/CamControls"]
 margin_top = 602.0
-margin_right = 100.0
+margin_right = 104.0
 margin_bottom = 622.0
-text = "Cam mode"
+text = "perspective"
+items = [ "perspective", null, false, 0, null, "orthogonal", null, false, 1, null, "frustum", null, false, 2, null ]
+selected = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI"]
 anchor_left = 0.5
@@ -158,17 +159,33 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Status" type="Label" parent="UI/HBoxContainer"]
-margin_top = 32.0
+[node name="Labels" type="VBoxContainer" parent="UI/HBoxContainer"]
 margin_right = 574.0
-margin_bottom = 46.0
+margin_bottom = 79.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.3
+custom_constants/separation = 0
+
+[node name="Status" type="Label" parent="UI/HBoxContainer/Labels"]
+margin_top = 24.0
+margin_right = 574.0
+margin_bottom = 38.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
-size_flags_stretch_ratio = 0.3
+size_flags_stretch_ratio = 0.8
 text = "Status: "
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Actions" type="Label" parent="UI/HBoxContainer/Labels"]
+margin_top = 64.0
+margin_right = 574.0
+margin_bottom = 78.0
+size_flags_vertical = 6
+size_flags_stretch_ratio = 0.2
+text = "Actions: "
 
 [node name="AnimationController" parent="UI/HBoxContainer" instance=ExtResource( 5 )]
 margin_left = 578.0
@@ -177,4 +194,13 @@ margin_right = 1920.0
 margin_bottom = 79.0
 size_flags_stretch_ratio = 0.7
 [connection signal="picture_taken" from="." to="UI" method="_on_SpritesheetsFrom3D_picture_taken"]
+[connection signal="picture_undone" from="." to="UI" method="_on_SpritesheetsFrom3D_picture_undone"]
 [connection signal="sheet_saved" from="." to="UI" method="_on_SpritesheetsFrom3D_sheet_saved"]
+[connection signal="ready" from="ViewportHeight/ViewportWidth/ViewportContainer/Viewport/myEditor" to="UI" method="_on_myEditor_ready"]
+[connection signal="pressed" from="UI/CamControls/plusX" to="UI" method="_on_plusX_pressed"]
+[connection signal="pressed" from="UI/CamControls/plusY" to="UI" method="_on_plusY_pressed"]
+[connection signal="pressed" from="UI/CamControls/plusZ" to="UI" method="_on_plusZ_pressed"]
+[connection signal="pressed" from="UI/CamControls/minusX" to="UI" method="_on_minusX_pressed"]
+[connection signal="pressed" from="UI/CamControls/minusY" to="UI" method="_on_minusY_pressed"]
+[connection signal="pressed" from="UI/CamControls/minusZ" to="UI" method="_on_minusZ_pressed"]
+[connection signal="item_selected" from="UI/CamControls/OptionButton" to="UI" method="_on_OptionButton_item_selected"]

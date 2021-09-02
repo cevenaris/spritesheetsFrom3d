@@ -3,8 +3,12 @@ extends Control
 
 
 var animationPlayer : AnimationPlayer setget set_animationPlayer
+var first_time = true
+var animation_time = 0 setget set_animation_time
 var options : OptionButton
+var currentOption : int = 0
 var slider : HSlider
+var slider_subdiv = 100 setget set_slider_subdiv
 
 
 func _ready():
@@ -13,7 +17,7 @@ func _ready():
 	animationPlayer = null
 
 
-func _process(delta):
+func _process(_delta):
 	if animationPlayer != null:
 		if animationPlayer.is_playing():
 			slider.value = animationPlayer.current_animation_position
@@ -36,29 +40,44 @@ func set_animationPlayer(new_player : AnimationPlayer) -> void:
 		var animationList = new_player.get_animation_list()
 		for i in range(animationList.size()):
 			options.add_item(animationList[i], i)
-		options.selected = 0
+		options.selected = currentOption
 		
 		animationPlayer = new_player
-		change_animation(0)
+		change_animation(options.selected)
 		animationPlayer.connect("animation_finished", self, "_on_animation_finished")
 
 
-func _on_animation_finished(anim_name):
+func set_animation_time(time : float):
+	if animationPlayer != null:
+		animationPlayer.seek(time, true)
+		animation_time = time
+
+
+func _on_animation_finished(_anim_name):
 	_on_Pause_pressed()
 
 
 func setup_slider():
 	slider.min_value = 0
 	slider.max_value = animationPlayer.current_animation_length
-	slider.tick_count = 100
+	slider.tick_count = slider_subdiv
+
+
+func set_slider_subdiv(num : int):
+	slider.tick_count = num
+	slider.step = slider.max_value / num
+	slider_subdiv = num
 
 
 # only call with animation picker values
 func change_animation(id : int) -> void:
 	var name : String = options.get_item_text(id)
-#	print(name)
 	animationPlayer.current_animation = name
-	animationPlayer.seek(0, true)
+	animationPlayer.stop(false)
+#	if first_time:
+#		animationPlayer.seek(0, true)
+#		animationPlayer.stop(false)
+#		first_time = false
 	setup_slider()
 #	print(animationPlayer.current_animation)
 
@@ -89,6 +108,7 @@ func _on_AnimationPicker_item_selected(id):
 #	print(id) works correctly
 	change_animation(id)
 	setup_slider()
+	currentOption = id
 
 
 func _on_Pause_pressed():

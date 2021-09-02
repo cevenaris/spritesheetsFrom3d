@@ -1,5 +1,5 @@
 class_name HelperFunctions
-extends Resource
+extends Node
 
 
 static func get_display_window_size() -> Vector2:

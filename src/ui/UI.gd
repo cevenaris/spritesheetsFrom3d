@@ -2,28 +2,133 @@ class_name UIManager
 extends CanvasLayer
 
 
-const STATUS_START = "Status: "
+var par : SpriteSheetsFrom3D
+var amc : AnimationController
+var lbh : VBoxContainer
+var sts : Label
+var act : Label
+var pvx : Spatial
+var pvy : Spatial
+var cam : Camera
+
+const ACTION_START = "action: "
+const ACTION_ABOVE_SEPARATOR = "---------------------------------\n"
+const STATUS_SEPARATOR = " - "
+const STATUS_START = "status: sheet name" + STATUS_SEPARATOR + "number of pictures"
+const ACTION_TEXT_WAIT_TIME = 1.5
+var names : PoolStringArray
 
 
-func _input(event):
+func _ready():
+	par = self.get_parent()
+	print(par.name)
+	amc = $HBoxContainer/AnimationController
+	lbh = $HBoxContainer/Labels
+	sts = $HBoxContainer/Labels/Status
+	act = $HBoxContainer/Labels/Actions
+	
+	yield(get_tree().create_timer(2), "timeout")
+	names = par.sheet_names
+	set_cam_stuff()
+	
+	
+	change_status_text()
+	change_action_text("", 0.1)
+
+
+func _input(_event):
 	if Input.is_action_just_pressed("ui_cancel"):
 		toggle_children_visibility()
 
 
+func set_cam_stuff():
+	pvx = par.edt.get_pivot_x()
+	pvy = par.edt.get_pivot_y()
+	cam = par.edt.get_camera()
+
+
 func toggle_children_visibility():
-	$HBoxContainer/Status.visible = !$HBoxContainer/Status.visible
-	$HBoxContainer/AnimationController.visible = !$HBoxContainer/AnimationController.visible
+	sts.visible = !sts.visible
+	amc.visible = !amc.visible
 
 
-func change_status_text(text : String, seconds : float):
-	$HBoxContainer/Status.text = STATUS_START + text
+func change_status_text():
+	sts.text = STATUS_START
+	var nums = par.get_texture_numbers_list()
+	print(nums)
+	for i in range(nums.size()):
+		sts.text += "\n\t" + names[i] + STATUS_SEPARATOR + str(nums[i])
+
+
+func change_action_text(text : String, seconds : float):
+	act.text = ACTION_ABOVE_SEPARATOR + ACTION_START + text
 	yield(get_tree().create_timer(seconds), "timeout")
-	$HBoxContainer/Status.text = STATUS_START
+	act.text = ACTION_ABOVE_SEPARATOR + ACTION_START
+
+
+func set_slider_subdiv(num : int):
+	amc.slider_subdiv = num
+
+
+func swap_amp(new_amp : AnimationPlayer, time : float):
+	$HBoxContainer/AnimationController.animationPlayer = new_amp
+	$HBoxContainer/AnimationController.animation_time = time
 
 
 func _on_SpritesheetsFrom3D_picture_taken():
-	change_status_text("Picture taken.", 2)
+	change_action_text("Picture taken.", ACTION_TEXT_WAIT_TIME)
+	change_status_text()
+	set_cam_stuff()
 
 
 func _on_SpritesheetsFrom3D_sheet_saved():
-	change_status_text("Image saved.", 2)
+	change_action_text("Image saved.", ACTION_TEXT_WAIT_TIME)
+	change_status_text()
+
+
+func _on_plusX_pressed():
+	pvx.rotation.x = 0
+	pvy.rotation.y = 3 * PI / 2
+
+
+func _on_plusY_pressed():
+	pvx.rotation.x = 3 * PI / 2
+	pvy.rotation.y = 0
+
+
+func _on_plusZ_pressed():
+	pvx.rotation.x = 0
+	pvy.rotation.y = 0
+
+
+func _on_minusX_pressed():
+	pvx.rotation.x = 0
+	pvy.rotation.y = PI / 2
+
+
+func _on_minusY_pressed():
+	pvx.rotation.x = PI / 2
+	pvy.rotation.y = 0
+
+
+func _on_minusZ_pressed():
+	pvx.rotation.x = 0
+	pvy.rotation.y = PI
+
+
+func _on_OptionButton_item_selected(id):
+	match id:
+		0: 
+			cam.projection = Camera.PROJECTION_PERSPECTIVE
+		1: 
+			cam.projection = Camera.PROJECTION_ORTHOGONAL
+		2: 
+			cam.projection = Camera.PROJECTION_FRUSTUM
+		_:
+			cam.projection = Camera.PROJECTION_PERSPECTIVE
+			print("Error switching camera projection modes, changing to perspective for now")
+
+
+func _on_SpritesheetsFrom3D_picture_undone():
+	change_action_text("Undid picture take.", ACTION_TEXT_WAIT_TIME)
+	change_status_text()

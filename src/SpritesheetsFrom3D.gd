@@ -5,16 +5,19 @@ extends Control
 export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx, *.tscn") var model_location # setget set_model_location
 export (String, DIR) var sheet_save_location
 export (int, 1, 10) var number_of_sheets
-export var sheet_names = PoolStringArray()
+export (PoolStringArray) var sheet_names = PoolStringArray()
 export (Vector2) var viewport_size = Vector2(1920, 1080) # setget viewport_size_set
 export (bool) var transparent_bg = true # setget transparent_bg_set
 export (Environment) var environment
 export (ShaderMaterial) var canvas_shader
 export (ShaderMaterial) var spatial_shader
-export (String) var sheet_save_name
 export (float, 0.0, 1.0) var pan_sensitivity = 0.04 # setget set_pan_sens
 export (float, 0.0, 1.0) var rotate_sensitivity = 0.04 # setget set_rot_sens
 export (float, 0.0, 1.0) var zoom_sensitivity = 0.2 # setget set_zoom_sens
+export (int, 10, 1000) var slider_subdivisions = 100
+# to add in next version
+#export (DynamicFont) var font
+#export (int, 10, 100) var font_size = 15
 
 var currSheet : int = 0
 const DEFAULT_SHEET_NAME = "unnamedSheet"
@@ -23,6 +26,7 @@ const SHEET_EXTENSION = ".png"
 var screenSize : Vector2 # = HelperFunctions.get_display_window_size()
 const MIN_VIEWPORT_SIZE = Vector2(192, 108)
 var textures : Array = []
+var texture_numbers : Array = []
 #var canChangeViewportSize = true
 
 var top : Panel
@@ -41,6 +45,7 @@ var amp : AnimationPlayer
 const VPC_CHILD_NUM = 1
 
 signal picture_taken
+signal picture_undone
 signal sheet_saved
 
 
@@ -76,10 +81,13 @@ func _ready():
 	var allMeshes : Array = HelperFunctions.get_all_descendants_of_type(mds, MeshInstance)
 	for i in allMeshes:
 		var mesh : MeshInstance = i as MeshInstance
-		mesh.set_surface_material(1, spatial_shader)
+		mesh.set_surface_material(0, spatial_shader)
 	
-	for i in range(number_of_sheets):
+	$UI.set_slider_subdiv(slider_subdivisions)
+	
+	for _i in range(number_of_sheets):
 		textures.append([])
+		texture_numbers.append(0)
 	
 	while sheet_names.size() > number_of_sheets:
 		sheet_names.remove(sheet_names.size() - 1)
@@ -100,6 +108,10 @@ func _input(event):
 			store_current_texture()
 			replace_viewport()
 			emit_signal("picture_taken")
+		
+		elif Input.is_action_just_pressed("viewport_undo"):
+			toss_last_texture()
+			emit_signal("picture_undone")
 		
 		elif Input.is_action_just_pressed("textures_save_sheet"):
 			save_all_sheets()
@@ -134,6 +146,10 @@ func _input(event):
 #
 #func bg_color_set(new_color):
 #	pass
+
+
+func get_texture_numbers_list() -> Array:
+	return texture_numbers
 
 
 func get_animation_player(root : Node) -> AnimationPlayer:
@@ -174,32 +190,51 @@ func adjust_vpc_size(new_size_unclamped: Vector2):
 func store_current_texture() -> void:
 	var image : ViewportTexture = vpt.get_texture()
 	textures[currSheet].append(image)
-	increment_sheet_num()
+	texture_numbers[currSheet] += 1
+	increment_sheet_num(true)
 
 
+func toss_last_texture() -> void:
+	increment_sheet_num(false)
+	var sheet : Array = textures[currSheet]
+	sheet.pop_back()
+	texture_numbers[currSheet] -= 1
 
-func increment_sheet_num():
-	currSheet += 1
+
+func increment_sheet_num(pos : bool) -> void:
+	if pos:
+		currSheet += 1
+	else:
+		currSheet -= 1
 	currSheet %= number_of_sheets
 
 
 func replace_viewport() -> void:
-#	var transY = edt.get_pivot_y().transform
-#	var transX = edt.get_pivot_x().transform
-#	var transZ = edt.get_camera().transform
-#
-#	var dupe = vpc.duplicate()
-#	hbc.remove_child(hbc.get_child(VPC_CHILD_NUM))
-#	hbc.add_child(dupe)
-#	hbc.move_child(dupe, VPC_CHILD_NUM)
-#
-#	vpc = hbc.get_child(VPC_CHILD_NUM)
-#	vpt = vpc.get_child(0)
-#	edt = vpt.get_child(0)
-#
-#	edt.get_pivot_y().transform = transY
-#	edt.get_pivot_x().transform = transX
-#	edt.get_camera().transform = transZ
+	var transY = edt.get_pivot_y().transform
+	var transX = edt.get_pivot_x().transform
+	var transZ = edt.get_camera().transform
+	var ampTime = amp.current_animation_position
+	
+	var dupe = vpc.duplicate()
+	hbc.remove_child(hbc.get_child(VPC_CHILD_NUM))
+	hbc.add_child(dupe)
+	hbc.move_child(dupe, VPC_CHILD_NUM)
+	
+	vpc = hbc.get_child(VPC_CHILD_NUM)
+	vpt = vpc.get_child(0)
+	edt = vpt.get_child(0)
+	mds = edt.get_child(0)
+	amp = get_animation_player(mds)
+
+	edt.get_pivot_y().transform = transY
+	edt.get_pivot_x().transform = transX
+	edt.get_camera().transform = transZ
+	$UI.swap_amp(amp, ampTime)
+	
+#	edt.obj = null
+#	print(edt.obj == mds)
+#	edt.obj = mds
+#	print(edt.obj == mds)
 	
 	# for some reason this way doesn't work, edt isn't added to the duplicate viewport
 #	var dupe : Viewport = vpt.duplicate() # duplicating the viewport
@@ -216,18 +251,18 @@ func replace_viewport() -> void:
 #	print(dupe.get_children())
 	
 	# for some reason this also doesn't work, the editor just stops being updated
-	vpt.remove_child(edt) # removing edt from vpt
-	var dupe : Viewport = vpt.duplicate()
-	dupe.add_child(edt)
-
-	vpc.remove_child(vpt) # viewport container only has one child, the viewport
-	vpt = dupe as Viewport
-	vpc.add_child(vpt)
-	
-	print(vpt.get_camera() == edt.get_camera())
-	edt.get_camera().current = false
-	wait(0.5)
-	edt.get_camera().make_current()
+#	vpt.remove_child(edt) # removing edt from vpt
+#	var dupe : Viewport = vpt.duplicate()
+#	dupe.add_child(edt)
+#
+#	vpc.remove_child(vpt) # viewport container only has one child, the viewport
+#	vpt = dupe as Viewport
+#	vpc.add_child(vpt)
+#
+#	print(vpt.get_camera() == edt.get_camera())
+#	edt.get_camera().current = false
+#	wait(0.5)
+#	edt.get_camera().make_current()
 
 
 func create_spriteSheet(which : int) -> Image:

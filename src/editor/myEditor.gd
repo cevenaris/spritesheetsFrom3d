@@ -58,12 +58,17 @@ func _input(event):
 
 
 func set_obj(new_obj : Node):
+	if obj != null:
+		obj.queue_free()
+		obj = null
+	
 	if new_obj == null:
 		print("ERROR: scene file could not be loaded, using default cube instead")
 		createPlaceHolder()
 	else:
 		add_child(new_obj)
 		move_child(new_obj, OBJ_CHILD_LOC)
+	obj = new_obj
 
 
 func createPlaceHolder():
