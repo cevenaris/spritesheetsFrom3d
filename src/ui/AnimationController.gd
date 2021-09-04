@@ -81,12 +81,7 @@ func change_animation(id : int) -> void:
 	var name : String = options.get_item_text(id)
 	animationPlayer.current_animation = name
 	animationPlayer.stop(false)
-#	if first_time:
-#		animationPlayer.seek(0, true)
-#		animationPlayer.stop(false)
-#		first_time = false
 	setup_slider()
-#	print(animationPlayer.current_animation)
 
 
 func _on_Start_pressed():
@@ -112,7 +107,6 @@ func _on_Rewind_toggled(button_pressed):
 
 
 func _on_AnimationPicker_item_selected(id):
-#	print(id) works correctly
 	change_animation(id)
 	setup_slider()
 	currentOption = id

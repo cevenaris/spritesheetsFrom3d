@@ -29,11 +29,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://editor/myEditor.gd"
 }, {
-"base": "Spatial",
-"class": "RotationGizmo",
-"language": "GDScript",
-"path": "res://editor/rotationGizmo.gd"
-}, {
 "base": "Control",
 "class": "SpriteSheetsFrom3D",
 "language": "GDScript",
@@ -43,26 +38,20 @@ _global_script_classes=[ {
 "class": "UIManager",
 "language": "GDScript",
 "path": "res://ui/UI.gd"
-}, {
-"base": "Control",
-"class": "ViewportSizeControls",
-"language": "GDScript",
-"path": "res://ui/ViewportSizeControls.gd"
 } ]
 _global_script_class_icons={
 "AnimationController": "",
 "EditorCamera": "",
 "HelperFunctions": "",
 "MyEditor": "",
-"RotationGizmo": "",
 "SpriteSheetsFrom3D": "",
-"UIManager": "",
-"ViewportSizeControls": ""
+"UIManager": ""
 }
 
 [application]
 
 config/name="spritesheetsFrom3d"
+config/description="Github: https://github.com/cevenaris/spritesheetsFrom3d/tree/main"
 run/main_scene="res://SpritesheetsFrom3D.tscn"
 run/low_processor_mode=true
 config/icon="res://icon.png"
@@ -116,11 +105,6 @@ editor_reset_transform={
 viewport_get_image={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":true,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
- ]
-}
-test_save_sheet={
-"deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
  ]
 }
 viewport_undo={

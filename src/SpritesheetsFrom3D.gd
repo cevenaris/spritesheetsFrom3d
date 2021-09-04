@@ -2,19 +2,19 @@ class_name SpriteSheetsFrom3D # add picture
 extends Control
 
 
-export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx, *.tscn") var model_location # setget set_model_location
+export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx, *.tscn") var model_location
 export (String, DIR) var sheet_save_location
 export (int, 1, 10) var number_of_sheets
 export (PoolStringArray) var sheet_names = PoolStringArray()
 export (bool) var fullscreen
-export (Vector2) var viewport_size = Vector2(1920, 1080) # setget viewport_size_set
-export (bool) var transparent_bg = true # setget transparent_bg_set
+export (Vector2) var viewport_size = Vector2(1920, 1080) 
+export (bool) var transparent_bg = true 
 export (Environment) var environment
 export (ShaderMaterial) var canvas_shader
 export (ShaderMaterial) var spatial_shader
-export (float, 0.0, 1.0) var pan_sensitivity = 0.04 # setget set_pan_sens
-export (float, 0.0, 1.0) var rotate_sensitivity = 0.04 # setget set_rot_sens
-export (float, 0.0, 1.0) var zoom_sensitivity = 0.2 # setget set_zoom_sens
+export (float, 0.0, 1.0) var pan_sensitivity = 0.04 
+export (float, 0.0, 1.0) var rotate_sensitivity = 0.04 
+export (float, 0.0, 1.0) var zoom_sensitivity = 0.2 
 export (float, 0, 1000000) var minimum_camera_distance = 0.1
 export (int, 10, 1000) var slider_subdivisions = 100
 export (DynamicFont) var font
@@ -23,11 +23,10 @@ var currSheet : int = 0
 const DEFAULT_SHEET_NAME = "unnamedSheet"
 const SHEET_EXTENSION = ".png"
 
-var screenSize : Vector2 # = HelperFunctions.get_display_window_size()
+var screenSize : Vector2 
 const MIN_VIEWPORT_SIZE = Vector2(192, 108)
 var textures : Array = []
 var texture_numbers : Array = []
-#var canChangeViewportSize = true
 
 var top : Panel
 var bot : Panel
@@ -41,7 +40,7 @@ var edt : MyEditor
 var amc : AnimationController
 var mds # the model scene
 var amp : AnimationPlayer
-#var is_edt_ready = false
+
 const VPC_CHILD_NUM = 1
 
 signal picture_taken
@@ -80,10 +79,12 @@ func _ready():
 	
 	edt.get_camera().environment = environment
 	vpc.material = canvas_shader
-	var allMeshes : Array = HelperFunctions.get_all_descendants_of_type(mds, MeshInstance)
-	for i in allMeshes:
-		var mesh : MeshInstance = i as MeshInstance
-		mesh.set_surface_material(0, spatial_shader)
+	
+	if modelScene != null:
+		var allMeshes : Array = HelperFunctions.get_all_descendants_of_type(mds, MeshInstance)
+		for i in allMeshes:
+			var mesh : MeshInstance = i as MeshInstance
+			mesh.set_surface_material(0, spatial_shader)
 	
 	edt.pan_sens = pan_sensitivity
 	edt.rot_sens = rotate_sensitivity
@@ -123,36 +124,6 @@ func _input(event):
 		elif Input.is_action_just_pressed("textures_save_sheet"):
 			save_all_sheets()
 			emit_signal("sheet_saved")
-
-
-#func set_model_location(new_loc : String):
-#	if is_edt_ready:
-#		print(new_loc)
-#		var new_model : PackedScene = load(new_loc)
-#		edt.obj = new_model
-#
-#
-#func set_pan_sens(newSens : float):
-#	if is_edt_ready:
-#		edt.pan_sens = newSens
-#
-#
-#func set_rot_sens(newSens : float):
-#	if is_edt_ready:
-#		edt.rot_sens = newSens
-#
-#
-#func set_zoom_sens(newSens : float):
-#	if is_edt_ready:
-#		edt.zoom_sens = newSens
-#
-#
-#func transparent_bg_set(yes):
-#	pass
-#
-#
-#func bg_color_set(new_color):
-#	pass
 
 
 func get_texture_numbers_list() -> Array:
@@ -237,39 +208,6 @@ func replace_viewport() -> void:
 	edt.get_pivot_x().transform = transX
 	edt.get_camera().transform = transZ
 	$UI.swap_amp(amp, ampTime)
-	
-#	edt.obj = null
-#	print(edt.obj == mds)
-#	edt.obj = mds
-#	print(edt.obj == mds)
-	
-	# for some reason this way doesn't work, edt isn't added to the duplicate viewport
-#	var dupe : Viewport = vpt.duplicate() # duplicating the viewport
-#	print(dupe.get_children())
-#	dupe.remove_child(dupe.get_child(0)) # viewport only has one child, the editor
-#	print(dupe.get_children())
-#	dupe.add_child(edt)
-#	print(dupe.get_children())
-#	print(dupe.get_child(0) == edt)
-#	print(edt)
-#	print("---------------------")
-#	dupe.add_child(Node2D.new())
-#	dupe.add_child(edt)
-#	print(dupe.get_children())
-	
-	# for some reason this also doesn't work, the editor just stops being updated
-#	vpt.remove_child(edt) # removing edt from vpt
-#	var dupe : Viewport = vpt.duplicate()
-#	dupe.add_child(edt)
-#
-#	vpc.remove_child(vpt) # viewport container only has one child, the viewport
-#	vpt = dupe as Viewport
-#	vpc.add_child(vpt)
-#
-#	print(vpt.get_camera() == edt.get_camera())
-#	edt.get_camera().current = false
-#	wait(0.5)
-#	edt.get_camera().make_current()
 
 
 func create_spriteSheet(which : int) -> Image:
@@ -299,12 +237,3 @@ func save_all_sheets():
 
 func wait(seconds : float) -> void:
 	yield(get_tree().create_timer(seconds), "timeout")
-
-#func _on_myEditor_ready():
-#	is_edt_ready = true
-#	yield(get_tree().create_timer(2.0), "timeout")
-#
-#	set_pan_sens(pan_sensitivity)
-#	set_rot_sens(rotate_sensitivity)
-#	set_zoom_sens(zoom_sensitivity)
-#	set_model_location(model_location as String)

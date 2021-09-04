@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://SpritesheetsFrom3D.gd" type="Script" id=1]
 [ext_resource path="res://editor/myEditor.tscn" type="PackedScene" id=2]
-[ext_resource path="res://default_env.tres" type="Environment" id=3]
 [ext_resource path="res://ui/AnimationController.tscn" type="PackedScene" id=5]
 [ext_resource path="res://ui/UI.gd" type="Script" id=6]
 
@@ -13,12 +12,6 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-model_location = "res://demos/godotv2_wip/scene.gltf"
-sheet_save_location = "res://tests"
-number_of_sheets = 2
-sheet_names = PoolStringArray( "test1" )
-environment = ExtResource( 3 )
-minimum_camera_distance = 5.0
 
 [node name="ViewportHeight" type="VBoxContainer" parent="."]
 margin_right = 1920.0
