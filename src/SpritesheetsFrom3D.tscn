@@ -13,13 +13,12 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-model_location = "res://demos/human_low_animated.glb"
+model_location = "res://demos/godotv2_wip/scene.gltf"
 sheet_save_location = "res://tests"
 number_of_sheets = 2
 sheet_names = PoolStringArray( "test1" )
 environment = ExtResource( 3 )
-pan_sensitivity = 0.02
-rotate_sensitivity = 0.02
+minimum_camera_distance = 5.0
 
 [node name="ViewportHeight" type="VBoxContainer" parent="."]
 margin_right = 1920.0
@@ -146,7 +145,7 @@ text = "perspective"
 items = [ "perspective", null, false, 0, null, "orthogonal", null, false, 1, null, "frustum", null, false, 2, null ]
 selected = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI"]
+[node name="BottomUI" type="HBoxContainer" parent="UI"]
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
@@ -159,40 +158,47 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Labels" type="VBoxContainer" parent="UI/HBoxContainer"]
-margin_right = 574.0
+[node name="Labels" type="VBoxContainer" parent="UI/BottomUI"]
+margin_right = 425.0
 margin_bottom = 79.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.3
+size_flags_stretch_ratio = 0.2
 custom_constants/separation = 0
 
-[node name="Status" type="Label" parent="UI/HBoxContainer/Labels"]
-margin_top = 24.0
-margin_right = 574.0
-margin_bottom = 38.0
-size_flags_horizontal = 3
-size_flags_vertical = 6
-size_flags_stretch_ratio = 0.8
-text = "Status: "
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Actions" type="Label" parent="UI/HBoxContainer/Labels"]
-margin_top = 64.0
-margin_right = 574.0
-margin_bottom = 78.0
+[node name="Actions" type="Label" parent="UI/BottomUI/Labels"]
+margin_top = 32.0
+margin_right = 425.0
+margin_bottom = 46.0
 size_flags_vertical = 6
 size_flags_stretch_ratio = 0.2
-text = "Actions: "
+text = "Action: "
 
-[node name="AnimationController" parent="UI/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 578.0
+[node name="AnimationController" parent="UI/BottomUI" instance=ExtResource( 5 )]
+margin_left = 429.0
 margin_top = 0.0
 margin_right = 1920.0
 margin_bottom = 79.0
 size_flags_stretch_ratio = 0.7
+
+[node name="StatusHolder" type="VBoxContainer" parent="UI"]
+margin_right = 160.0
+margin_bottom = 1080.0
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Status" type="Label" parent="UI/StatusHolder"]
+margin_top = 533.0
+margin_right = 160.0
+margin_bottom = 547.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+text = "Status: "
+
 [connection signal="picture_taken" from="." to="UI" method="_on_SpritesheetsFrom3D_picture_taken"]
 [connection signal="picture_undone" from="." to="UI" method="_on_SpritesheetsFrom3D_picture_undone"]
 [connection signal="sheet_saved" from="." to="UI" method="_on_SpritesheetsFrom3D_sheet_saved"]

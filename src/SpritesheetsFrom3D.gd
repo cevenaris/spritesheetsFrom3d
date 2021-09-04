@@ -6,6 +6,7 @@ export (String, FILE, "*.gltf, *.glb, *.dae, *.obj, *.escn, *.fbx, *.tscn") var 
 export (String, DIR) var sheet_save_location
 export (int, 1, 10) var number_of_sheets
 export (PoolStringArray) var sheet_names = PoolStringArray()
+export (bool) var fullscreen
 export (Vector2) var viewport_size = Vector2(1920, 1080) # setget viewport_size_set
 export (bool) var transparent_bg = true # setget transparent_bg_set
 export (Environment) var environment
@@ -14,10 +15,9 @@ export (ShaderMaterial) var spatial_shader
 export (float, 0.0, 1.0) var pan_sensitivity = 0.04 # setget set_pan_sens
 export (float, 0.0, 1.0) var rotate_sensitivity = 0.04 # setget set_rot_sens
 export (float, 0.0, 1.0) var zoom_sensitivity = 0.2 # setget set_zoom_sens
+export (float, 0, 1000000) var minimum_camera_distance = 0.1
 export (int, 10, 1000) var slider_subdivisions = 100
-# to add in next version
-#export (DynamicFont) var font
-#export (int, 10, 100) var font_size = 15
+export (DynamicFont) var font
 
 var currSheet : int = 0
 const DEFAULT_SHEET_NAME = "unnamedSheet"
@@ -62,7 +62,9 @@ func _ready():
 	vpc = $ViewportHeight/ViewportWidth/ViewportContainer
 	vpt = vpc.get_child(0)
 	edt = vpt.get_child(0)
-	amc = $UI/HBoxContainer/AnimationController
+	amc = $UI/BottomUI/AnimationController
+	
+	OS.window_fullscreen = fullscreen
 	
 	adjust_vpc_size(viewport_size)
 	
@@ -71,7 +73,7 @@ func _ready():
 		mds = modelScene.instance()
 		edt.obj = mds
 		amp = get_animation_player(mds)
-		$UI/HBoxContainer/AnimationController.animationPlayer = amp
+		$UI/BottomUI/AnimationController.animationPlayer = amp
 	else:
 		edt.obj = null
 		amc.animationPlayer = null
@@ -82,6 +84,11 @@ func _ready():
 	for i in allMeshes:
 		var mesh : MeshInstance = i as MeshInstance
 		mesh.set_surface_material(0, spatial_shader)
+	
+	edt.pan_sens = pan_sensitivity
+	edt.rot_sens = rotate_sensitivity
+	edt.zoom_sens = zoom_sensitivity
+	edt.min_cam_dist = minimum_camera_distance
 	
 	$UI.set_slider_subdiv(slider_subdivisions)
 	
@@ -271,7 +278,7 @@ func create_spriteSheet(which : int) -> Image:
 	
 	var pba : PoolByteArray = PoolByteArray()
 	for i in textures[which]:
-		var img : Image= i.get_data()
+		var img : Image = i.get_data()
 		img.convert(Image.FORMAT_RGBA8)
 		pba.append_array(img.get_data())
 	
