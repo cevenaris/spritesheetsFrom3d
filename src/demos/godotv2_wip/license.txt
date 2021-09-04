@@ -1,0 +1,11 @@
+Model Information:
+* title:	GodotV2 WIP
+* source:	https://sketchfab.com/3d-models/godotv2-wip-c6a79418f58d4bcebe2aad602e21d9b6
+* author:	ImageParSeconde (https://sketchfab.com/ImageParSeconde)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "GodotV2 WIP" (https://sketchfab.com/3d-models/godotv2-wip-c6a79418f58d4bcebe2aad602e21d9b6) by ImageParSeconde (https://sketchfab.com/ImageParSeconde) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

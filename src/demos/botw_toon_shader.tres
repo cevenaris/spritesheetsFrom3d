@@ -2,13 +2,7 @@
 
 [sub_resource type="Shader" id=1]
 code = "// BoTW Toon Shader by NekotoArts
-// wrote this at 2AM
-//
-//
-//
-// England is my city
-// Smoke trees
-// Two to the One from the One to the Three
+
 shader_type spatial;
 render_mode diffuse_toon, specular_toon;
 
