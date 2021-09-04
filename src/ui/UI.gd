@@ -4,33 +4,41 @@ extends CanvasLayer
 
 var par : SpriteSheetsFrom3D
 var amc : AnimationController
+var bui : HBoxContainer
 var lbh : VBoxContainer
+var cct : VBoxContainer
+var sth : VBoxContainer
 var sts : Label
 var act : Label
 var pvx : Spatial
 var pvy : Spatial
 var cam : Camera
 
-const ACTION_START = "action: "
-const ACTION_ABOVE_SEPARATOR = "---------------------------------\n"
+const ACTION_START = "Action: "
 const STATUS_SEPARATOR = " - "
-const STATUS_START = "status: sheet name" + STATUS_SEPARATOR + "number of pictures"
+const STATUS_START = "Status: sheet name" + STATUS_SEPARATOR + "number of pictures"
 const ACTION_TEXT_WAIT_TIME = 1.5
 var names : PoolStringArray
+
+var font : DynamicFont
 
 
 func _ready():
 	par = self.get_parent()
-	print(par.name)
-	amc = $HBoxContainer/AnimationController
-	lbh = $HBoxContainer/Labels
-	sts = $HBoxContainer/Labels/Status
-	act = $HBoxContainer/Labels/Actions
+	amc = $BottomUI/AnimationController
+	bui = $BottomUI
+	lbh = $BottomUI/Labels
+	cct = $CamControls
+	sth = $StatusHolder
+	sts = $StatusHolder/Status
+	act = $BottomUI/Labels/Actions
+	
+	font = par.font
+	set_fonts()
 	
 	yield(get_tree().create_timer(2), "timeout")
 	names = par.sheet_names
 	set_cam_stuff()
-	
 	
 	change_status_text()
 	change_action_text("", 0.1)
@@ -41,6 +49,21 @@ func _input(_event):
 		toggle_children_visibility()
 
 
+func set_fonts():
+	amc.set_fonts(font)
+	
+	if font != null:
+		for i in cct.get_children():
+			var temp : Button = i as Button
+			i.set("custom_fonts/font", font)
+		
+		sts.set("custom_fonts/font", font)
+		act.set("custom_fonts/font", font)
+		
+		if font.size > par.screenSize.x / 96:
+			cct.rect_position.x -= font.size * 3 # empirically verified
+
+
 func set_cam_stuff():
 	pvx = par.edt.get_pivot_x()
 	pvy = par.edt.get_pivot_y()
@@ -48,22 +71,22 @@ func set_cam_stuff():
 
 
 func toggle_children_visibility():
-	sts.visible = !sts.visible
-	amc.visible = !amc.visible
+	sth.visible = !sth.visible
+	bui.visible = !bui.visible
+	cct.visible = !cct.visible
 
 
 func change_status_text():
 	sts.text = STATUS_START
 	var nums = par.get_texture_numbers_list()
-	print(nums)
 	for i in range(nums.size()):
 		sts.text += "\n\t" + names[i] + STATUS_SEPARATOR + str(nums[i])
 
 
 func change_action_text(text : String, seconds : float):
-	act.text = ACTION_ABOVE_SEPARATOR + ACTION_START + text
+	act.text = ACTION_START + text
 	yield(get_tree().create_timer(seconds), "timeout")
-	act.text = ACTION_ABOVE_SEPARATOR + ACTION_START
+	act.text = ACTION_START
 
 
 func set_slider_subdiv(num : int):
@@ -71,8 +94,8 @@ func set_slider_subdiv(num : int):
 
 
 func swap_amp(new_amp : AnimationPlayer, time : float):
-	$HBoxContainer/AnimationController.animationPlayer = new_amp
-	$HBoxContainer/AnimationController.animation_time = time
+	amc.animationPlayer = new_amp
+	amc.animation_time = time
 
 
 func _on_SpritesheetsFrom3D_picture_taken():

@@ -23,6 +23,13 @@ func _process(_delta):
 			slider.value = animationPlayer.current_animation_position
 
 
+func set_fonts(font : DynamicFont):
+	if font != null:
+		for i in $HBoxContainer.get_children():
+			var temp : Button = i as Button
+			temp.set("custom_fonts/font", font)
+
+
 func set_animationPlayer(new_player : AnimationPlayer) -> void:
 	options.clear()
 	
